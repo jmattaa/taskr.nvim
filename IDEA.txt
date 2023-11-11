@@ -1,0 +1,4 @@
+Idea:
+  - Create and edit tasks
+  - Apply code snippets or files to tasks
+  - Save tasks
