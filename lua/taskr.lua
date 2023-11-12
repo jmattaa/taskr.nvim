@@ -1,9 +1,10 @@
-local config = require "taskr.config"
-
 local M = {}
 
 function M.setup(opts)
-    config.init(opts)
+    require'taskr.config'.setup(opts)
+
+    require'taskr.commands'.setup()
+    require'taskr.keymaps'.setup()
 end
 
 return M
