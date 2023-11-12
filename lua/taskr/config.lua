@@ -1,4 +1,3 @@
-local utils = require 'taskr.utils'
 local M = {}
 
 -- set default config
