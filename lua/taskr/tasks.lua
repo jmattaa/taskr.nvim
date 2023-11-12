@@ -34,12 +34,17 @@ function M.add_current_file()
     end
 
     local description = vim.fn.input("Task description: ", "")
+    if description == "" then return end
 
     M.add_task(description, filename)
 end
 
 function M.save_tasks()
     utils.table.save_file(M.tasks, config.taskfile)
+end
+
+function M.display_tasks()
+    local buf = vim.api.nvim_create_buf(false, true)
 end
 
 return M

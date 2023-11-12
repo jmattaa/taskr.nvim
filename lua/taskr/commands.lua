@@ -8,13 +8,27 @@ local commands = {
             nargs = '*'
         },
     },
+    TaskrAddFile = {
+        run = "add_current_file",
+        mod = "taskr.tasks",
+        args = {
+            nargs = 0
+        },
+    },
     TaskrSave = {
         run = "save_tasks",
         mod = "taskr.tasks",
         args = {
             nargs = 0
         },
-    }
+    },
+    TaskrDisplay = {
+        run = "display_tasks",
+        mod = "taskr.tasks",
+        args = {
+            nargs = 0,
+        },
+    },
 }
 
 function M.setup()

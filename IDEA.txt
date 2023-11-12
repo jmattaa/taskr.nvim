@@ -1,4 +1,8 @@
 Idea:
   - Create and edit tasks
-  - Apply code snippets or files to tasks
+  - Apply line or files to tasks
+  - Vew tasks
+  - Get to applied line or file quickly
   - Save tasks
+  - Remove tasks
+  - Finish tasks

@@ -5,8 +5,9 @@ local config = {
     taskfile = "tasks",
     leader = "<leader>t",
     keymaps = {
-        ["a"] = "add_current_file",
-        ["s"] = "save_tasks",
+        ["a"] = "TaskrAddFile",
+        ["s"] = "TaskrSave",
+        ["d"] = "TaskrDisplay",
     }
 }
 
