@@ -44,23 +44,43 @@ function M.save_tasks()
     print("Taskr: Saved tasks")
 end
 
--- didn't take this from quickmark.nvim
--- startl starting line index
--- endl ending line index -1 for last line
--- u see i read docs
-local function print_to_buf(buf, str, startl)
+local function print_desc_apply_to_buf(buf, desc, apply, startl, nr)
+    local line = string.format("%s. %-30s%s", nr, apply, desc)
     vim.api.nvim_buf_set_lines(
         buf,
         startl,
         -1,
         false,
-        { str }
+        { line }
     )
 end
 
-local function print_desc_apply_to_buf(buf, desc, apply, startl)
-    local line = string.format("%-40s\t%s", desc, apply)
-    print_to_buf(buf, line, startl)
+local function open_tasks_win(buf)
+    local width = vim.api.nvim_get_option("columns")
+    local height = vim.api.nvim_get_option("lines")
+    local win_height = math.ceil(height * 0.4 - 4)
+    local win_width = math.ceil(width * 0.7)
+
+    -- starting position center
+    local row = math.ceil((height - win_height) / 2 - 1)
+    local col = math.ceil((width - win_width) / 2)
+
+    local win_opts = {
+        style = "minimal",
+        relative = "editor",
+        width = win_width,
+        height = win_height,
+        row = row,
+        col = col
+    }
+
+    vim.api.nvim_open_win(buf, true, win_opts)
+
+    -- window opts
+    vim.wo.wrap = true
+    vim.wo.linebreak = true
+    vim.wo.breakindent = true
+    vim.wo.breakindentopt = 'shift:33' -- why 33 tho, we've got 30
 end
 
 function M.display_tasks()
@@ -71,7 +91,7 @@ function M.display_tasks()
         local desc = M.tasks[i][1]
         local apply = M.tasks[i][2]
 
-        print_desc_apply_to_buf(buf, desc, apply, current_line)
+        print_desc_apply_to_buf(buf, desc, apply, current_line, i)
     end
 
     local keymap_opts = {
@@ -80,10 +100,14 @@ function M.display_tasks()
 
     vim.api.nvim_buf_set_keymap(buf, "n", "q", ":bdelete<CR>", keymap_opts)
 
+    -- some nice opts
+    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe') -- delete when closed
+
     -- this must be right before we open the window
     -- so we can programatically do stuff
     vim.api.nvim_buf_set_option(buf, "modifiable", false)
-    vim.api.nvim_set_current_buf(buf)
+
+    open_tasks_win(buf)
 end
 
 return M
