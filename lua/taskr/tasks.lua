@@ -70,6 +70,25 @@ function M.save_tasks()
     print("Taskr: Saved tasks")
 end
 
+-- open the task under cursor in task window
+function M.open_current_task()
+    local idx = vim.api.nvim_win_get_cursor(0)[1]
+    local task = M.tasks[idx]
+    local filename = task[2][1]
+
+    vim.cmd("bdelete")
+    vim.cmd("e " .. filename)
+
+    -- set cursor position
+    if task[2][2] ~= nil then
+        local curpos = task[2][2]
+        local curRow = tonumber(curpos[1])
+        local curCol = tonumber(curpos[2])
+        vim.api.nvim_win_set_cursor(0, { curRow, curCol })
+    end
+end
+
+
 local function print_desc_apply_to_buf(buf, desc, apply, startl, nr)
     local maxChars = display_lhs_size - 6
 
@@ -128,6 +147,16 @@ local function open_tasks_win(buf)
     vim.wo.breakindentopt = 'shift:' .. display_lhs_size + 3
 end
 
+local function set_display_tasks_keymaps(buf)
+    local keymap_opts = {
+        nowait = true, noremap = true, silent = true
+    }
+
+    vim.api.nvim_buf_set_keymap(buf, "n", "q", ":bdelete<CR>", keymap_opts)
+    vim.api.nvim_buf_set_keymap(buf, "n", "<CR>",
+        ":TaskrOpenCurrentTask<CR>", keymap_opts)
+end
+
 function M.display_tasks()
     local buf = vim.api.nvim_create_buf(false, true)
 
@@ -155,11 +184,7 @@ function M.display_tasks()
         )
     end
 
-    local keymap_opts = {
-        nowait = true, noremap = true, silent = true
-    }
-
-    vim.api.nvim_buf_set_keymap(buf, "n", "q", ":bdelete<CR>", keymap_opts)
+    set_display_tasks_keymaps(buf)
 
     -- some nice opts
     vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe') -- delete when closed

@@ -36,6 +36,13 @@ local commands = {
             nargs = 0,
         },
     },
+    TaskrOpenCurrentTask = {
+        run = "open_current_task",
+        mod = "taskr.tasks",
+        args = {
+            nargs = 0,
+        },
+    },
 }
 
 function M.setup()
