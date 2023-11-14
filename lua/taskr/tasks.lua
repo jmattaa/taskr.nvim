@@ -3,8 +3,6 @@ local M = {}
 local config = require "taskr.config".config
 local utils = require "taskr.utils"
 
-local display_lhs_size = 40
-
 M.tasks = utils.table.load_file(config.taskfile) or {}
 
 function M.add_task(description, apply)
@@ -88,65 +86,6 @@ function M.open_current_task()
     end
 end
 
-
-local function print_desc_apply_to_buf(buf, desc, apply, startl, nr)
-    local maxChars = display_lhs_size - 6
-
-    local lhs = ""
-
-    if apply[2] ~= nil then
-        local linenum = apply[2][1] -- cursor col is in apply[2][2]
-        lhs = apply[1] .. ":" .. linenum
-    else
-        lhs = apply[1]
-    end
-
-    lhs = utils.string.truncate(lhs, maxChars)
-
-    local line = string.format(
-        "%s. %-" .. display_lhs_size .. "s%s",
-        nr, lhs, desc
-    )
-
-    vim.api.nvim_buf_set_lines(
-        buf,
-        startl,
-        startl + 1,
-        false,
-        { line }
-    )
-end
-
-local function open_tasks_win(buf)
-    local width = vim.api.nvim_get_option("columns")
-    local height = vim.api.nvim_get_option("lines")
-    local win_height = math.ceil(height * 0.4 - 4)
-    local win_width = math.ceil(width * 0.7)
-
-    -- starting position center
-    local row = math.ceil((height - win_height) / 2 - 1)
-    local col = math.ceil((width - win_width) / 2)
-
-    local win_opts = {
-        style = "minimal",
-        relative = "editor",
-        width = win_width,
-        height = win_height,
-        row = row,
-        col = col
-    }
-
-    vim.api.nvim_open_win(buf, true, win_opts)
-
-    -- window opts
-    vim.wo.wrap = true
-    vim.wo.linebreak = true
-    vim.wo.breakindent = true
-
-    -- why +3 tho, idk but it works
-    vim.wo.breakindentopt = 'shift:' .. display_lhs_size + 3
-end
-
 local function set_display_tasks_keymaps(buf)
     local keymap_opts = {
         nowait = true, noremap = true, silent = true
@@ -165,7 +104,7 @@ function M.display_tasks()
         local desc = M.tasks[i][1]
         local apply = M.tasks[i][2]
 
-        print_desc_apply_to_buf(buf, desc, apply, current_line, i)
+        utils.taskwin.print_desc_apply_to_buf(buf, desc, apply, current_line, i)
 
         -- flip highlight at every other line so we clearly see stuff
         local hlgroup
@@ -193,7 +132,7 @@ function M.display_tasks()
     -- so we can programatically do stuff
     vim.api.nvim_buf_set_option(buf, "modifiable", false)
 
-    open_tasks_win(buf)
+    utils.taskwin.open_tasks_win(buf)
 end
 
 return M
