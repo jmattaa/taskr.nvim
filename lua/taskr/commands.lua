@@ -8,6 +8,13 @@ local commands = {
             nargs = '*'
         },
     },
+    TaskrAddLine = {
+        run = "add_current_line",
+        mod = "taskr.tasks",
+        args = {
+            nargs = 0,
+        },
+    },
     TaskrAddFile = {
         run = "add_current_file",
         mod = "taskr.tasks",

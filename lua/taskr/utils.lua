@@ -1,9 +1,16 @@
-local M = { table = {} }
+local M = { table = {}, string = {} }
 
 function M.table.serialize(tbl)
     local str = "{"
     for k, v in pairs(tbl) do
-        str = str .. "[" .. tostring(k) .. "]=" .. "\"" .. tostring(v) .. "\","
+        local val = v
+        if type(val) == "table" then
+            val = M.table.serialize(v)
+        else
+            val = "\"" .. tostring(v) .. "\""
+        end
+
+        str = str .. "[" .. tostring(k) .. "]=" .. val .. ","
     end
     str = str .. "}"
     return str
@@ -36,6 +43,14 @@ function M.table.load_file(filename)
         return tables
     else
         return nil
+    end
+end
+
+function M.string.truncate(str, max)
+    if #str > max then
+        return string.sub(str, 1, max) .. "..."
+    else
+        return str
     end
 end
 

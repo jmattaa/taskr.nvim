@@ -4,8 +4,10 @@ local M = {}
 local config = {
     taskfile = "tasks",
     leader = "<leader>t",
+    autosave = true, -- save after add 
     keymaps = {
-        ["a"] = "TaskrAddFile",
+        ["a"] = "TaskrAddLine",
+        ["f"] = "TaskrAddFile",
         ["s"] = "TaskrSave",
         ["d"] = "TaskrDisplay",
     }
